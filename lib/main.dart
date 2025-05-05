@@ -9,11 +9,29 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return  MaterialApp(
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: const TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.settings)),
+                Tab(icon: Icon(Icons.home)),
+                Tab(icon: Icon(Icons.person))
+              ],
+            ),
+            title: const Text('TabBar Example'),
+
+          ),
+          body: const TabBarView(
+            children: [
+              Center(child: Text('Settings')),
+              Center(child: Text('Home')),
+              Center(child: Text('Profile')),
+            ],
+          ),
+        )
       ),
     );
   }
