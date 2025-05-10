@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practica_flutter_david_carlos/views/list_view.dart';
 
 class MyTabBarView extends StatelessWidget {
   const MyTabBarView({super.key});
@@ -23,9 +24,9 @@ class MyTabBarView extends StatelessWidget {
           ),
           body: const TabBarView(
             children: [
-              Center(child: Text('Hechas')),
-              Center(child: Text('Haciendo')),
-              Center(child: Text('Por Hacer')),
+              Center(child: TaskListView()),
+              Center(child: TaskListView()),
+              Center(child: TaskListView()),
             ],
           ),
         )
