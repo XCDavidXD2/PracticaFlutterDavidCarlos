@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'custom_drawer.dart';
+import '../model/tarea.dart';
+import 'nueva_tarea_modal.dart';
+import 'tarea_item.dart';
+import '../viewmodel/tarea_view_model.dart';
+import 'package:provider/provider.dart';
 
 class TabContent extends StatelessWidget {
   final String title;
@@ -13,12 +18,55 @@ class TabContent extends StatelessWidget {
     required this.onTipoChanged,
   });
 
+  void _mostrarModalNuevaTarea(BuildContext context, Estado estado) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => NuevaTareaModal(
+        estado: estado,
+        tipoVista: tipoActual,
+      ),
+    );
+  }
+
+  Estado _obtenerEstadoActual(int tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        return Estado.porHacer;
+      case 1:
+        return Estado.haciendo;
+      case 2:
+        return Estado.hechos;
+      default:
+        return Estado.porHacer;
+    }
+  }
+
+  Tipo _convertirTipoVistaATipo(TipoVista tipoVista) {
+    switch (tipoVista) {
+      case TipoVista.clase:
+        return Tipo.clase;
+      case TipoVista.trabajo:
+        return Tipo.trabajo;
+      case TipoVista.personal:
+        return Tipo.personal;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tabIndex = DefaultTabController.of(context).index;
+    final estado = _obtenerEstadoActual(tabIndex);
+    final tipo = _convertirTipoVistaATipo(tipoActual);
+    
     return Scaffold(
       drawer: CustomDrawer(
         tipoActual: tipoActual,
         onTipoChanged: onTipoChanged,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _mostrarModalNuevaTarea(context, estado),
+        child: const Icon(Icons.add),
       ),
       body: Builder(
         builder: (context) => Column(
@@ -32,8 +80,27 @@ class TabContent extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Center(
-                child: Text(title),
+              child: Consumer<TareaViewModel>(
+                builder: (context, viewModel, child) {
+                  final tareas = viewModel.obtenerTareasPorEstadoYTipo(estado, tipo);
+                  
+                  if (tareas.isEmpty) {
+                    return const Center(
+                      child: Text('No hay tareas en esta sección'),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: tareas.length,
+                    itemBuilder: (context, index) {
+                      final tarea = tareas[index];
+                      return TareaItem(
+                        tarea: tarea,
+                        onDelete: () => viewModel.eliminarTarea(tarea),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],

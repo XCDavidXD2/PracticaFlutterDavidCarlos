@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'view/custom_drawer.dart';
 import 'view/tab_content.dart';
+import 'viewmodel/tarea_view_model.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,8 +13,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomeScreen(),
+    return ChangeNotifierProvider(
+      create: (context) => TareaViewModel(),
+      child: const MaterialApp(
+        home: HomeScreen(),
+      ),
     );
   }
 }
